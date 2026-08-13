@@ -35,5 +35,5 @@ Mọi thay đổi đáng chú ý của dự án được ghi lại tại đây. 
 - Validate danh sách To/CC/MC trước khi tạo email.
 - Loại dữ liệu supplier, input, output, log và binary release khỏi version control; installer dùng cấu hình mẫu `example.com`.
 
-[Unreleased]: https://github.com/moi0329/MR-Auto-Send-Supplier/compare/v1.3.0...HEAD
-[1.3.0]: https://github.com/moi0329/MR-Auto-Send-Supplier/releases/tag/v1.3.0
+[Unreleased]: https://github.com/hugo-lcqh/MR-Auto-Send-Supplier/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/hugo-lcqh/MR-Auto-Send-Supplier/releases/tag/v1.3.0

@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/version-1.3.0-0E6F9F)](../../releases/tag/v1.3.0)
 ![Platform](https://img.shields.io/badge/platform-Windows-0078D4)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1-5391FE)
-[![CI](https://github.com/moi0329/MR-Auto-Send-Supplier/actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
+[![CI](https://github.com/hugo-lcqh/MR-Auto-Send-Supplier/actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
 
 Ứng dụng Windows tự động hóa quy trình **Material Request (MR)**: chuẩn hóa dữ liệu Excel, tạo file riêng cho từng supplier, soạn/gửi email Outlook, quét file phản hồi và nhắc các yêu cầu quá hạn.
 
@@ -126,4 +126,4 @@ Dự án dùng [Semantic Versioning](https://semver.org/). Xem lịch sử thay 
 - Quy trình branch, commit và pull request: [CONTRIBUTING.md](CONTRIBUTING.md).
 - Cách báo cáo vấn đề bảo mật và quy tắc xử lý dữ liệu: [SECURITY.md](SECURITY.md).
 
-Maintainer: [@moi0329](https://github.com/moi0329) · Hugo Le Chi Quoc Hung
+Maintainer: [@hugo-lcqh](https://github.com/hugo-lcqh) · Hugo Le Chi Quoc Hung
