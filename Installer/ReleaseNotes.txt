@@ -1,0 +1,36 @@
+MR AUTO SEND SUPPLIER
+Material Request Control Center
+NỘI DUNG CẬP NHẬT
+VERSION 1.3.0 | 13-Aug-2026
+
+CẢI TIẾN GIAO DIỆN LAUNCHER
+---------------------------
+- Bố cục được chia rõ thành Supplier Queue, Run Settings và Operation Workflow,
+  giúp người dùng theo dõi dữ liệu và chọn tác vụ nhanh hơn.
+- Bốn tác vụ được sắp xếp theo đúng trình tự vận hành: Prepare Input, Send MR,
+  Scan Replies và Remind Pending.
+- Bổ sung trạng thái trực tiếp trên Launcher: sẵn sàng, đang xử lý, hoàn tất,
+  thất bại hoặc đã khởi chạy tác vụ.
+- Hỗ trợ thay đổi kích thước cửa sổ, tự điều chỉnh theo DPI và duy trì bố cục
+  ổn định từ kích thước tối thiểu 960 x 740.
+- Sử dụng bảng màu công nghiệp có độ tương phản cao, nút thao tác lớn và trạng
+  thái hover/pressed rõ ràng hơn.
+
+CẢI TIẾN TRẢI NGHIỆM SỬ DỤNG
+----------------------------
+- Cải thiện thứ tự Tab, hỗ trợ phím Esc để đóng Launcher và tự đặt tiêu điểm
+  tại danh sách supplier khi mở chương trình.
+- Bổ sung tooltip và mô tả accessibility cho danh sách supplier, thiết lập chạy
+  và các nút tác vụ.
+- Giữ mặc định an toàn "Display only, do not send" để người dùng kiểm tra email
+  trước khi gửi thật.
+
+CẬP NHẬT CHƯƠNG TRÌNH VÀ DỮ LIỆU
+--------------------------------
+- Cập nhật MR-Launcher.ps1, MR-Outlook.ps1 và Template.xlsx khi chạy bộ cài mới.
+- Giữ nguyên suppliers.csv và reply_folder.txt hiện có trên máy người dùng;
+  bộ cài chỉ tạo các file này khi chúng chưa tồn tại.
+- Giữ lại thư mục Config, Input và MR_Out khi gỡ cài đặt để bảo vệ dữ liệu
+  cấu hình và kết quả làm việc của người dùng.
+- Logic backend và các tham số xử lý trong MR-Outlook.ps1 không thay đổi trong
+  lần thiết kế lại giao diện Launcher này.

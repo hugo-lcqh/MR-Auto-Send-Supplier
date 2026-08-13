@@ -1,0 +1,25 @@
+# Local tooling
+.agents/
+.codex/
+.remote-audit/
+tasks/
+.vscode/
+
+# Business and personal data
+Config/suppliers.csv
+Input/*
+!Input/Template.xlsx
+MR_Out/
+
+# Generated release artifacts
+Release/
+*.exe
+*.zip
+
+# Machine-specific files
+*.lnk
+*.log
+*.tmp
+~$*
+Thumbs.db
+.DS_Store
