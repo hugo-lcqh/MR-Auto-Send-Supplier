@@ -1,0 +1,17 @@
+* text=auto
+
+.gitattributes text eol=lf
+.gitignore text eol=lf
+*.ps1 text eol=crlf
+*.iss text eol=crlf
+*.txt text eol=crlf
+*.csv text eol=crlf
+*.md text eol=lf
+*.yml text eol=lf
+
+*.xls binary
+*.xlsb binary
+*.xlsx binary
+*.exe binary
+*.zip binary
+*.lnk binary

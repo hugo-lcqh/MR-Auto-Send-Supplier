@@ -1,252 +1,189 @@
-# Huong dan setup chuong trinh MR Auto
+# Hướng dẫn cài đặt MR Auto Send Supplier
 
-Tai lieu nay dung de copy va thiet lap chuong trinh **MR Auto Send Supplier** tren mot may tinh khac.
+Tài liệu này áp dụng cho **MR Auto Send Supplier v1.3.0** trên Windows.
 
-## 1. Dieu kien tren may moi
+## 1. Điều kiện hệ thống
 
-May moi can co:
+Máy sử dụng cần có:
 
-- Windows.
+- Windows PowerShell 5.1 tại `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`.
 - Microsoft Excel desktop.
-- Microsoft Outlook desktop da dang nhap email.
-- PowerShell Windows co san tai:
-  `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`
-- Quyen cho phep Excel/Outlook automation bang COM. Neu Outlook/Excel hien canh bao lan dau, hay mo thu cong Excel va Outlook truoc, sau do chay lai chuong trinh.
+- Microsoft Outlook classic desktop đã đăng nhập email.
+- Quyền Excel/Outlook COM automation.
 
-## 2. Copy dung cau truc thu muc
+> New Outlook không hỗ trợ COM automation. Nếu installer báo thiếu Outlook, hãy cài hoặc chuyển sang Outlook classic.
 
-Copy nguyen thu muc `MR Auto Send Supplier` sang may moi. Cau truc toi thieu can giu nhu sau:
+## 2. Cài bằng installer
+
+1. Tải `MR-Auto-Setup-v1.3.0.exe` từ [GitHub Releases](../../releases/latest).
+2. Đóng các phiên MR Auto đang chạy.
+3. Chạy installer và đọc phần **What's New**.
+4. Chọn tạo desktop shortcut nếu cần.
+5. Sau khi cài, ứng dụng nằm tại:
+
+```text
+%LOCALAPPDATA%\MR Auto Send Supplier
+```
+
+Installer kiểm tra Excel và Outlook trước khi cài. Khi nâng cấp, các file sau được cập nhật:
+
+- `Scripts\MR-Launcher.ps1`
+- `Scripts\MR-Outlook.ps1`
+- `Input\Template.xlsx`
+
+Các dữ liệu người dùng sau được giữ nguyên:
+
+- `Config\suppliers.csv`
+- `Config\reply_folder.txt`
+- toàn bộ `Input` và `MR_Out`
+
+## 3. Cài thủ công từ source
+
+Clone hoặc tải source rồi giữ nguyên cấu trúc:
 
 ```text
 MR Auto Send Supplier
 |-- Config
-|   |-- suppliers.csv
+|   |-- suppliers.example.csv
 |   `-- reply_folder.txt
 |-- Input
-|   |-- Template.xlsx
-|   `-- dd.MM.yyyy
-|       |-- file MR dau vao .xlsx/.xlsb
+|   `-- Template.xlsx
 |-- MR_Out
 |-- Scripts
 |   |-- MR-Launcher.ps1
 |   `-- MR-Outlook.ps1
-`-- Test MR-Outlook.lnk
+`-- Tests
 ```
 
-Khong doi ten cac thu muc `Config`, `Input`, `MR_Out`, `Scripts` neu khong sua lai script.
+Tạo cấu hình local:
 
-## 3. Chuan bi file cau hinh supplier
-
-Mo file:
-
-```text
-Config\suppliers.csv
+```powershell
+Copy-Item .\Config\suppliers.example.csv .\Config\suppliers.csv
+New-Item -ItemType Directory -Force .\MR_Out | Out-Null
 ```
 
-Kiem tra cac cot chinh:
+Không đổi tên `Config`, `Input`, `MR_Out` hoặc `Scripts` nếu chưa cập nhật các đường dẫn trong script.
 
-- `Keyword`: tu khoa/alias de match ten supplier trong file MR. Neu co nhieu alias, cach nhau bang dau `;`.
-- `VendorName`: ten supplier.
-- `Email To`: danh sach email supplier nhan mail.
-- `Email CC`: danh sach email CC.
-- `MC`: email MC phu trach.
+## 4. Cấu hình supplier
 
-Luu y:
+Mở `Config\suppliers.csv` và thay dữ liệu mẫu bằng dữ liệu nội bộ.
 
-- Danh sach email trong mot o co the cach nhau bang dau `;`.
-- Ten supplier trong input can match voi `VendorName` hoac alias trong `Keyword`.
-- Nen test bang che do **Display only, do not send** truoc khi bo tick de gui that.
+| Cột | Nội dung |
+|---|---|
+| `Keyword` | Alias dùng để match tên supplier; nhiều alias phân tách bằng `;` |
+| `VendorCode` | Mã supplier |
+| `VendorName` | Tên supplier chuẩn |
+| `Email To` | Người nhận chính; nhiều email phân tách bằng `;` |
+| `Email CC` | Danh sách CC |
+| `MC` | MC phụ trách |
+| `Buyer` | Buyer phụ trách |
 
-## 4. Chuan bi Outlook folder de scan reply
+Ứng dụng bỏ qua supplier có địa chỉ email không hợp lệ. Luôn chạy test với **Display only, do not send** sau khi thay đổi cấu hình.
 
-File cau hinh:
+## 5. Cấu hình thư mục Outlook
 
-```text
-Config\reply_folder.txt
-```
-
-Mac dinh dang la:
+Giá trị mặc định trong `Config\reply_folder.txt` là:
 
 ```text
 MR_REQUEST
 ```
 
-Trong Outlook, tao folder con duoi Inbox voi dung ten nay neu muon chuong trinh scan reply trong folder rieng:
+Tạo thư mục `Inbox\MR_REQUEST` trong Outlook nếu muốn tách riêng reply. Khi thư mục không tồn tại, ứng dụng cảnh báo và quét Inbox.
+
+## 6. Chuẩn bị input
+
+Trong `Input`, tạo thư mục theo định dạng `dd.MM.yyyy`, ví dụ:
 
 ```text
-Inbox\MR_REQUEST
+Input\13.08.2026
 ```
 
-Neu folder khong ton tai, script se canh bao va scan Inbox thay the.
+Đặt file `.xlsx` hoặc `.xlsb` vào thư mục ngày mới nhất. File đầu vào cần:
 
-## 5. Chuan bi input MR
+- sheet `MR`;
+- header nằm trong 100 dòng đầu;
+- các cột chính như `Vendor Name`, `Part No.`, `Request Qty` và `Material Need By Date`.
 
-Trong thu muc `Input`, tao mot folder theo ngay voi dinh dang:
-
-```text
-dd.MM.yyyy
-```
-
-Vi du:
-
-```text
-Input\08.07.2026
-```
-
-Bo cac file MR Excel dau vao vao folder ngay nay. Script se tu chon folder ngay moi nhat theo dinh dang tren.
-
-Yeu cau file dau vao:
-
-- File Excel co sheet ten `MR`.
-- Header nam trong 100 dong dau.
-- Can co cac cot quan trong nhu `Vendor Name`, `Part No.`, `Shortage Qty` hoac `Request Qty`, va `Material Need By Date`.
-
-Sau khi chay Prepare, chuong trinh se tao:
+Tác vụ Prepare tạo:
 
 ```text
 Input\dd.MM.yyyy\MR_Master_Input.txt
 Input\dd.MM.yyyy\MR_Master_Input.xlsx
 ```
 
-## 6. Chay bang giao dien Launcher
+## 7. Quy trình vận hành an toàn
 
-Cach khuyen dung:
+1. Mở Excel và Outlook, xử lý mọi popup đăng nhập.
+2. Mở **MR Auto Send Supplier**.
+3. Giữ chọn **Display only, do not send**.
+4. Chọn **Prepare Input**.
+5. Chọn một supplier có ít dòng để kiểm tra trước.
+6. Chọn **Send MR**.
+7. Kiểm tra trong Outlook:
+   - To/CC đúng;
+   - subject có dạng `MR_REQUEST|Supplier|yyyyMMdd_HHmmss`;
+   - bảng MR và attachment đúng supplier;
+   - ngày và số lượng hiển thị đúng.
+8. Chỉ bỏ chọn Display khi đã xác nhận toàn bộ nội dung.
 
-1. Double click `Test MR-Outlook.lnk`.
-2. Giu tick **Display only, do not send** khi test.
-3. Bam **Prepare Input** de tao master input va load danh sach supplier.
-4. Chon supplier can xu ly.
-5. Bam mot trong cac nut:
-   - **Send MR**: tao file MR theo supplier va tao/gui email.
-   - **Scan Replies**: doc reply trong Outlook va cap nhat feedback vao master input.
-   - **Remind**: gui reminder cho request qua 24h chua reply.
+## 8. Quét reply và reminder
 
-Neu shortcut khong chay sau khi copy sang may moi, tao lai shortcut theo muc 7.
+- **Scan Replies** đọc attachment từ thư mục Outlook đã cấu hình, lưu bản sao vào `MR_Out\Replies` và cập nhật master.
+- **Remind Pending** tạo reply trong đúng email thread cho các yêu cầu quá 24 giờ chưa có phản hồi.
+- Khi chạy ở chế độ Display, email/reminder không được ghi nhận là đã gửi.
 
-## 7. Tao lai shortcut neu duong dan bi sai
+## 9. Chạy bằng command line
 
-Shortcut cu co the dang tro ve duong dan cua may goc. Tren may moi, tao shortcut moi voi:
+```powershell
+# Launcher
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Scripts\MR-Launcher.ps1
 
-**Target:**
+# Prepare
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Scripts\MR-Outlook.ps1 -Mode prepare
+
+# Preview Send
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Scripts\MR-Outlook.ps1 -Mode send -Display
+
+# Scan Replies
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Scripts\MR-Outlook.ps1 -Mode scan -ReplyFolder MR_REQUEST
+
+# Preview Reminder
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Scripts\MR-Outlook.ps1 -Mode remind -Display
+```
+
+## 10. Lỗi thường gặp
+
+### Installer báo thiếu Excel hoặc Outlook
+
+Xác nhận ứng dụng desktop đã được cài đúng kiến trúc và mở được thủ công. New Outlook không đáp ứng yêu cầu COM automation.
+
+### Không đọc được input
+
+Kiểm tra tên thư mục `dd.MM.yyyy`, sheet `MR`, các cột bắt buộc và bảo đảm file không bị khóa trong Excel.
+
+### Không thấy supplier trong launcher
+
+Chạy **Prepare Input**, sau đó kiểm tra `Vendor Name` trong master và mapping trong `Config\suppliers.csv`.
+
+### Supplier bị bỏ qua khi Send
+
+Kiểm tra `Email To`, `Email CC` và `MC`. Mỗi địa chỉ phải hợp lệ và được phân tách bằng `;`.
+
+### Scan không cập nhật master
+
+Đóng file master đang mở, kiểm tra subject reply, attachment Excel/CSV, trace columns và thư mục Outlook trong `reply_folder.txt`.
+
+### Shortcut cũ không chạy
+
+Gỡ shortcut cũ và chạy lại installer. Shortcut thủ công cần trỏ đến `powershell.exe` với tham số:
 
 ```text
-C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "<thu_muc_cai_dat>\Scripts\MR-Launcher.ps1"
 ```
 
-**Arguments:**
+## 11. Bảo vệ dữ liệu
 
-```text
--NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "DUONG_DAN_MOI\MR Auto Send Supplier\Scripts\MR-Launcher.ps1"
-```
-
-**Start in:**
-
-```text
-DUONG_DAN_MOI\MR Auto Send Supplier
-```
-
-Thay `DUONG_DAN_MOI` bang noi da copy thu muc tren may moi.
-
-## 8. Lenh chay truc tiep khi can debug
-
-Mo PowerShell tai thu muc `MR Auto Send Supplier`, sau do chay:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\Scripts\MR-Launcher.ps1"
-```
-
-Chay prepare:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\Scripts\MR-Outlook.ps1" -Mode prepare
-```
-
-Mo mail de xem truoc, khong gui:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\Scripts\MR-Outlook.ps1" -Mode send -Display
-```
-
-Scan reply:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\Scripts\MR-Outlook.ps1" -Mode scan -ReplyFolder "MR_REQUEST"
-```
-
-Gui reminder dang display, khong gui that:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\Scripts\MR-Outlook.ps1" -Mode remind -Display
-```
-
-## 9. Output sau khi chay
-
-Thu muc output chinh:
-
-```text
-MR_Out
-```
-
-File va folder thuong gap:
-
-- `MR_Out\MR_<Supplier>_<yyyyMMdd_HHmmss>.xlsx`: file gui cho supplier.
-- `MR_Out\mr_sent.csv`: log cac email MR da tao/gui, dung de scan reply va remind.
-- `MR_Out\Replies\dd.MM-dd.MM.yyyy`: file reply attachment da luu theo tuan.
-
-## 10. Quy trinh test an toan tren may moi
-
-1. Mo Excel va Outlook thu cong, dam bao khong bi popup dang nhap.
-2. Mo launcher.
-3. Giu tick **Display only, do not send**.
-4. Bam **Prepare Input**.
-5. Chon 1 supplier it dong.
-6. Bam **Send MR**.
-7. Kiem tra email hien len trong Outlook:
-   - To/CC dung.
-   - Subject co dang `MR_REQUEST|Supplier|yyyyMMdd_HHmmss`.
-   - Attachment dung supplier.
-8. Neu tat ca OK, moi bo tick **Display only, do not send** de gui that.
-
-## 11. Loi thuong gap
-
-### Shortcut khong mo
-
-Nguyen nhan thuong la shortcut dang tro ve duong dan may cu. Tao lai shortcut theo muc 7.
-
-### Khong doc duoc input
-
-Kiem tra:
-
-- Folder input co dung format `dd.MM.yyyy` khong.
-- File Excel co sheet `MR` khong.
-- Header co cac cot bat buoc khong.
-- File Excel co dang mo va bi lock khong.
-
-### Khong thay supplier trong launcher
-
-Chay **Prepare Input** truoc. Neu van khong thay, kiem tra cot `Vendor Name` trong input va file `Config\suppliers.csv`.
-
-### Email gui sai hoac khong co email
-
-Kiem tra `Config\suppliers.csv`:
-
-- `VendorName` hoac `Keyword` co match voi ten supplier trong input khong.
-- `Email To` co bi trong khong.
-- Cac email co cach nhau bang `;` khong.
-
-### Scan reply khong cap nhat data
-
-Kiem tra:
-
-- Reply email co subject dang reply/forward cua `MR_REQUEST|...` khong.
-- Reply co attachment Excel khong.
-- Attachment con cac cot `_SourceKey`, `Reply Qty`, `ETA Vendor can Supply`, `IF CAN NOT` khong.
-- Reply co nam trong tuan hien tai khong.
-- Folder Outlook trong `Config\reply_folder.txt` co dung khong.
-
-## 12. Luu y khi chuyen cho nguoi khac
-
-- Nen xoa file output cu trong `MR_Out` neu khong muon mang theo lich su test.
-- Neu muon giu lich su da gui/remind/scan thi giu `MR_Out\mr_sent.csv`.
-- Khong xoa `Input\Template.xlsx` vi file nay dung de tao master va format output.
-- Khi test tren may moi, luon bat dau bang **Display only, do not send**.
+- Không commit `Config\suppliers.csv`, `Input\dd.MM.yyyy` hoặc `MR_Out`.
+- Không đưa file MR thật vào issue, pull request hoặc release asset.
+- Chỉ phát hành installer/ZIP đã được kiểm tra và không chứa dữ liệu vận hành.
+- Repo đã từng chứa dữ liệu mẫu vận hành cũ; khi cần loại bỏ khỏi toàn bộ lịch sử, hãy thực hiện một quy trình history rewrite riêng có phê duyệt và phối hợp với mọi người dùng repo.

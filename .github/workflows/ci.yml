@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Windows PowerShell 5.1
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: powershell
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Verify launcher UI contract
+        run: .\Tests\MR-Launcher.UI.Tests.ps1
+
+      - name: Verify synchronized version metadata
+        run: .\Tests\MR-Launcher.Version.Tests.ps1
+
+      - name: Run backend regression checks
+        run: .\Tests\MR-Outlook.Regression.Tests.ps1 -SupplierPath Config\suppliers.example.csv
+
+      - name: Verify supplier attachment columns
+        run: .\Tests\MR-Attachment.Columns.Tests.ps1
